@@ -4,6 +4,8 @@ import { useState } from "react";
 import Sidebar from "@/components/Sidebar";
 
 export default function NewLeadPage() {
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+
   const [lead, setLead] = useState({
     name: "",
     company: "",
@@ -108,6 +110,20 @@ Review pricing limits, avoid over-discounting, and reference their specific prod
 
             <input
               type="file"
+              accept="image/*"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+
+                if (!file) return;
+
+                const reader = new FileReader();
+
+                reader.onloadend = () => {
+                  setImagePreview(reader.result as string);
+                };
+
+                reader.readAsDataURL(file);
+              }}
               className="w-full rounded-xl bg-zinc-800 border border-zinc-700 p-4"
             />
 
@@ -115,6 +131,26 @@ Review pricing limits, avoid over-discounting, and reference their specific prod
               Later this will auto-extract name, company, email, WeChat ID,
               country, product interest, and conversation context.
             </p>
+
+            {imagePreview && (
+              <div className="mt-4">
+                <p className="text-zinc-400 text-sm mb-2">Image Preview</p>
+
+                <img
+                  src={imagePreview}
+                  alt="Uploaded lead source"
+                  className="max-h-72 rounded-xl border border-zinc-700"
+                />
+
+                <button
+                  type="button"
+                  onClick={simulateAIExtract}
+                  className="mt-4 bg-zinc-800 text-white px-5 py-3 rounded-xl font-semibold"
+                >
+                  Extract From Photo
+                </button>
+              </div>
+            )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
