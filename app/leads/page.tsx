@@ -1,40 +1,28 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Link from "next/link";
 import Sidebar from "@/components/Sidebar";
 
-export default function NewLeadPage() {
-  const [lead, setLead] = useState({
-    name: "",
-    company: "",
-    email: "",
-    wechat: "",
-    country: "",
-    eventSource: "",
-    productInterest: "",
-    notes: "",
-  });
+type Lead = {
+  id: string;
+  name: string;
+  company: string;
+  country: string;
+  productInterest: string;
+  status: string;
+};
 
-  function updateField(field: string, value: string) {
-    setLead((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  }
+export default function LeadsPage() {
+  const [leads, setLeads] = useState<Lead[]>([]);
 
-  function simulateAIExtract() {
-    setLead({
-      name: "Carlos Mendes",
-      company: "Mendes Home Imports",
-      email: "carlos@mendeshome.com",
-      wechat: "carlos_mendes88",
-      country: "Brazil",
-      eventSource: "CIFF Guangzhou",
-      productInterest: "OEM furniture manufacturing, oak dining tables",
-      notes:
-        "Buyer asked about MOQ, FOB pricing, shipping timeline, and possible quarterly orders. Appears price sensitive but serious.",
-    });
-  }
+  useEffect(() => {
+    const savedLeads = JSON.parse(
+      localStorage.getItem("blackboothai-leads") || "[]"
+    );
+
+    setLeads(savedLeads);
+  }, []);
 
   return (
     <main className="min-h-screen bg-black text-white flex">
@@ -43,112 +31,65 @@ export default function NewLeadPage() {
       <section className="flex-1 p-8">
         <div className="flex items-center justify-between mb-10">
           <div>
-            <h1 className="text-4xl font-bold">Add New Lead</h1>
+            <h1 className="text-4xl font-bold">Leads</h1>
             <p className="text-zinc-400 mt-2">
-              Upload trade show contacts and let BlackBoothAI prepare the lead profile.
+              Manage trade show contacts, buyer intent, and follow-up status.
             </p>
           </div>
 
-          <button
-            type="button"
-            onClick={simulateAIExtract}
+          <Link
+            href="/leads/new"
             className="bg-white text-black px-5 py-3 rounded-xl font-semibold"
           >
-            Simulate AI Extract
-          </button>
+            + Add Lead
+          </Link>
         </div>
 
-        <form className="max-w-4xl space-y-6">
-          <div className="bg-zinc-900 rounded-2xl p-6 border border-zinc-800">
-            <label className="block text-sm text-zinc-400 mb-2">
-              Business Card / WeChat Screenshot / Notes Upload
-            </label>
-
-            <input
-              type="file"
-              className="w-full rounded-xl bg-zinc-800 border border-zinc-700 p-4"
-            />
-
-            <p className="text-zinc-500 text-sm mt-3">
-              Later this will auto-extract name, company, email, WeChat ID, country,
-              product interest, and conversation context.
+        {leads.length === 0 ? (
+          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-8">
+            <h2 className="text-2xl font-bold mb-2">No leads saved yet</h2>
+            <p className="text-zinc-400 mb-6">
+              Add your first trade show lead to start building relationship
+              intelligence.
             </p>
+
+            <Link
+              href="/leads/new"
+              className="inline-block bg-white text-black px-5 py-3 rounded-xl font-semibold"
+            >
+              Add First Lead
+            </Link>
           </div>
+        ) : (
+          <div className="space-y-4">
+            {leads.map((lead) => (
+              <Link key={lead.id} href={`/leads/${lead.id}`}>
+                <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5 flex items-center justify-between hover:bg-zinc-800 transition cursor-pointer">
+                  <div>
+                    <h3 className="font-semibold text-lg">
+                      {lead.name || "Unnamed Lead"} —{" "}
+                      {lead.company || "Unknown Company"}
+                    </h3>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input
-              value={lead.name}
-              onChange={(e) => updateField("name", e.target.value)}
-              className="bg-zinc-900 rounded-xl p-4 border border-zinc-800"
-              placeholder="Full Name"
-            />
+                    <p className="text-zinc-400">
+                      {lead.productInterest || "No product interest added"}
+                    </p>
+                  </div>
 
-            <input
-              value={lead.company}
-              onChange={(e) => updateField("company", e.target.value)}
-              className="bg-zinc-900 rounded-xl p-4 border border-zinc-800"
-              placeholder="Company"
-            />
+                  <div className="text-right">
+                    <p className="text-green-400 font-semibold">
+                      {lead.status || "New Lead"}
+                    </p>
 
-            <input
-              value={lead.email}
-              onChange={(e) => updateField("email", e.target.value)}
-              className="bg-zinc-900 rounded-xl p-4 border border-zinc-800"
-              placeholder="Email"
-            />
-
-            <input
-              value={lead.wechat}
-              onChange={(e) => updateField("wechat", e.target.value)}
-              className="bg-zinc-900 rounded-xl p-4 border border-zinc-800"
-              placeholder="WeChat ID"
-            />
-
-            <input
-              value={lead.country}
-              onChange={(e) => updateField("country", e.target.value)}
-              className="bg-zinc-900 rounded-xl p-4 border border-zinc-800"
-              placeholder="Country"
-            />
-
-            <input
-              value={lead.eventSource}
-              onChange={(e) => updateField("eventSource", e.target.value)}
-              className="bg-zinc-900 rounded-xl p-4 border border-zinc-800"
-              placeholder="Event Source"
-            />
+                    <p className="text-zinc-500 text-sm">
+                      {lead.country || "No country"}
+                    </p>
+                  </div>
+                </div>
+              </Link>
+            ))}
           </div>
-
-          <input
-            value={lead.productInterest}
-            onChange={(e) => updateField("productInterest", e.target.value)}
-            className="w-full bg-zinc-900 rounded-xl p-4 border border-zinc-800"
-            placeholder="Product Interest"
-          />
-
-          <textarea
-            value={lead.notes}
-            onChange={(e) => updateField("notes", e.target.value)}
-            className="w-full bg-zinc-900 rounded-xl p-4 min-h-36 border border-zinc-800"
-            placeholder="Conversation notes: MOQ, price, timeline, samples, buyer concerns, negotiation context..."
-          />
-
-          <div className="bg-zinc-900 rounded-2xl p-6 border border-zinc-800">
-            <h2 className="text-xl font-bold mb-2">AI Relationship Preview</h2>
-
-            <p className="text-zinc-400">
-              Once connected, BlackBoothAI will generate buyer intent, lead score,
-              recommended next action, and a prep briefing before contact.
-            </p>
-          </div>
-
-          <button
-            type="button"
-            className="bg-white text-black px-6 py-3 rounded-xl font-semibold"
-          >
-            Save Lead
-          </button>
-        </form>
+        )}
       </section>
     </main>
   );

@@ -41,7 +41,9 @@ export default function NewLeadPage() {
   function generateLocalBriefing() {
     setAiBriefing(
       `Relationship Summary:
-${lead.name || "This buyer"} appears interested in ${lead.productInterest || "the discussed products"}. They should be treated as a warm to hot lead based on the conversation notes.
+${lead.name || "This buyer"} appears interested in ${
+        lead.productInterest || "the discussed products"
+      }. They should be treated as a warm to hot lead based on the conversation notes.
 
 Buyer Intent:
 Warm / Hot
@@ -83,7 +85,6 @@ Review pricing limits, avoid over-discounting, and reference their specific prod
         <div className="flex items-center justify-between mb-10">
           <div>
             <h1 className="text-4xl font-bold">Add New Lead</h1>
-
             <p className="text-zinc-400 mt-2">
               Upload trade show contacts and let BlackBoothAI prepare the lead
               profile.
@@ -162,9 +163,7 @@ Review pricing limits, avoid over-discounting, and reference their specific prod
 
           <input
             value={lead.productInterest}
-            onChange={(e) =>
-              updateField("productInterest", e.target.value)
-            }
+            onChange={(e) => updateField("productInterest", e.target.value)}
             className="w-full bg-zinc-900 rounded-xl p-4 border border-zinc-800"
             placeholder="Product Interest"
           />
@@ -189,10 +188,7 @@ Review pricing limits, avoid over-discounting, and reference their specific prod
               <h2 className="text-xl font-bold mb-4">
                 AI Relationship Briefing
               </h2>
-
-              <p className="text-zinc-300 leading-7">
-                {aiBriefing}
-              </p>
+              <p className="text-zinc-300 leading-7">{aiBriefing}</p>
             </div>
           )}
 
