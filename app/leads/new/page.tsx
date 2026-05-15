@@ -54,6 +54,27 @@ Review pricing limits, avoid over-discounting, and reference their specific prod
     );
   }
 
+  function saveLead() {
+    const savedLeads = JSON.parse(
+      localStorage.getItem("blackboothai-leads") || "[]"
+    );
+
+    const newLead = {
+      id: Date.now().toString(),
+      ...lead,
+      aiBriefing,
+      status: "New Lead",
+      createdAt: new Date().toISOString(),
+    };
+
+    localStorage.setItem(
+      "blackboothai-leads",
+      JSON.stringify([newLead, ...savedLeads])
+    );
+
+    window.location.href = "/leads";
+  }
+
   return (
     <main className="min-h-screen bg-black text-white flex">
       <Sidebar />
@@ -62,8 +83,10 @@ Review pricing limits, avoid over-discounting, and reference their specific prod
         <div className="flex items-center justify-between mb-10">
           <div>
             <h1 className="text-4xl font-bold">Add New Lead</h1>
+
             <p className="text-zinc-400 mt-2">
-              Upload trade show contacts and let BlackBoothAI prepare the lead profile.
+              Upload trade show contacts and let BlackBoothAI prepare the lead
+              profile.
             </p>
           </div>
 
@@ -88,23 +111,60 @@ Review pricing limits, avoid over-discounting, and reference their specific prod
             />
 
             <p className="text-zinc-500 text-sm mt-3">
-              Later this will auto-extract name, company, email, WeChat ID, country,
-              product interest, and conversation context.
+              Later this will auto-extract name, company, email, WeChat ID,
+              country, product interest, and conversation context.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input value={lead.name} onChange={(e) => updateField("name", e.target.value)} className="bg-zinc-900 rounded-xl p-4 border border-zinc-800" placeholder="Full Name" />
-            <input value={lead.company} onChange={(e) => updateField("company", e.target.value)} className="bg-zinc-900 rounded-xl p-4 border border-zinc-800" placeholder="Company" />
-            <input value={lead.email} onChange={(e) => updateField("email", e.target.value)} className="bg-zinc-900 rounded-xl p-4 border border-zinc-800" placeholder="Email" />
-            <input value={lead.wechat} onChange={(e) => updateField("wechat", e.target.value)} className="bg-zinc-900 rounded-xl p-4 border border-zinc-800" placeholder="WeChat ID" />
-            <input value={lead.country} onChange={(e) => updateField("country", e.target.value)} className="bg-zinc-900 rounded-xl p-4 border border-zinc-800" placeholder="Country" />
-            <input value={lead.eventSource} onChange={(e) => updateField("eventSource", e.target.value)} className="bg-zinc-900 rounded-xl p-4 border border-zinc-800" placeholder="Event Source" />
+            <input
+              value={lead.name}
+              onChange={(e) => updateField("name", e.target.value)}
+              className="bg-zinc-900 rounded-xl p-4 border border-zinc-800"
+              placeholder="Full Name"
+            />
+
+            <input
+              value={lead.company}
+              onChange={(e) => updateField("company", e.target.value)}
+              className="bg-zinc-900 rounded-xl p-4 border border-zinc-800"
+              placeholder="Company"
+            />
+
+            <input
+              value={lead.email}
+              onChange={(e) => updateField("email", e.target.value)}
+              className="bg-zinc-900 rounded-xl p-4 border border-zinc-800"
+              placeholder="Email"
+            />
+
+            <input
+              value={lead.wechat}
+              onChange={(e) => updateField("wechat", e.target.value)}
+              className="bg-zinc-900 rounded-xl p-4 border border-zinc-800"
+              placeholder="WeChat ID"
+            />
+
+            <input
+              value={lead.country}
+              onChange={(e) => updateField("country", e.target.value)}
+              className="bg-zinc-900 rounded-xl p-4 border border-zinc-800"
+              placeholder="Country"
+            />
+
+            <input
+              value={lead.eventSource}
+              onChange={(e) => updateField("eventSource", e.target.value)}
+              className="bg-zinc-900 rounded-xl p-4 border border-zinc-800"
+              placeholder="Event Source"
+            />
           </div>
 
           <input
             value={lead.productInterest}
-            onChange={(e) => updateField("productInterest", e.target.value)}
+            onChange={(e) =>
+              updateField("productInterest", e.target.value)
+            }
             className="w-full bg-zinc-900 rounded-xl p-4 border border-zinc-800"
             placeholder="Product Interest"
           />
@@ -126,13 +186,19 @@ Review pricing limits, avoid over-discounting, and reference their specific prod
 
           {aiBriefing && (
             <div className="bg-zinc-900 rounded-2xl p-6 border border-zinc-800 whitespace-pre-line">
-              <h2 className="text-xl font-bold mb-4">AI Relationship Briefing</h2>
-              <p className="text-zinc-300 leading-7">{aiBriefing}</p>
+              <h2 className="text-xl font-bold mb-4">
+                AI Relationship Briefing
+              </h2>
+
+              <p className="text-zinc-300 leading-7">
+                {aiBriefing}
+              </p>
             </div>
           )}
 
           <button
             type="button"
+            onClick={saveLead}
             className="bg-white text-black px-6 py-3 rounded-xl font-semibold"
           >
             Save Lead
