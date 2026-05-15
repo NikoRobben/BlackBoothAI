@@ -143,12 +143,28 @@ Review pricing limits, avoid over-discounting, and reference their specific prod
                 />
 
                 <button
-                  type="button"
-                  onClick={simulateAIExtract}
-                  className="mt-4 bg-zinc-800 text-white px-5 py-3 rounded-xl font-semibold"
-                >
-                  Extract From Photo
-                </button>
+                type="button"
+                onClick={async () => {
+                  if (!imagePreview) return;
+
+                  const response = await fetch("/api/ai/extract-photo", {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ image: imagePreview }),
+                  });
+
+                  const data = await response.json();
+
+                  if (data.success) {
+                    setLead(data.lead);
+                  }
+                }}
+                className="mt-4 bg-zinc-800 text-white px-5 py-3 rounded-xl font-semibold"
+              >
+                Extract From Photo
+              </button>
               </div>
             )}
           </div>
